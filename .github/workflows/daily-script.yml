@@ -45,7 +45,7 @@ jobs:
         # 获取pip缓存路径，并创建自定义的.pip_cache目录（如果不存在的话）
         $pipCacheDir = (pip cache dir)
         mkdir -Force "$($env:GITHUB_WORKSPACE)\.pip_cache"
-        Get-ChildItem -Path $pipCacheDir -Recurse | Copy-Item -Destination "$($env:GITHUB_WORKSPACE)\.pip_cache" -Recurse -Container
+        Get-ChildItem -Path $pipCacheDir -Recurse | Copy-Item -Destination "$($env:GITHUB_WORKSPACE)\.pip_cache" -Recurse -Container -Force
 
     - name: Save pip cache (if needed)
       if: steps.cache-pip.outputs.cache-hit != 'true'
