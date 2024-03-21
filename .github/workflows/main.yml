@@ -1,4 +1,4 @@
-name: main
+name: Windows Python Build and Run
 
 on:
   workflow_dispatch: # 允许手动触发
@@ -6,19 +6,14 @@ on:
 
 env:
   PYTHON_VERSION: 3.9
+  CACHE_KEY: windows-pip-${{ github.sha }}
 
 jobs:
-  run-browser-tests:
+  build-and-run:
     runs-on: windows-latest
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v2
-
-    # 计算requirements.txt哈希并设置为环境变量
-    - name: Get requirements.txt hash
-      id: requirements_hash
-      shell: bash
-      run: echo "::set-env name=CACHE_KEY::windows-pip-$(openssl dgst -sha256 requirements.txt | awk '{print $2}')"
 
     - name: Cache pip dependencies
       id: cache-pip
@@ -29,24 +24,31 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-pip-
 
-    - name: Set up Python (with automatic cache restoration)
+    - name: Set up Python
       uses: actions/setup-python@v3
       with:
         python-version: ${{ env.PYTHON_VERSION }}
 
-    - name: Install Google Chrome
-      shell: powershell
+    - name: Install Dependencies
       run: |
-        $chromeInstallerPath = 'https://dl.google.com/tag/s/installdataindex/update2/installers/ChromeStandaloneSetup64.exe'
-        Start-Process msiexec.exe -Wait -ArgumentList '/I', $chromeInstallerPath, '/quiet'
-
-    - name: Add ChromeDriver to PATH
-      shell: powershell
-      run: |
-        echo "$($env:GITHUB_WORKSPACE)\chromedriver.exe" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-
-    - name: Run browser automation script
-      run: python test.py
-      env:
-        VERBOSE: true
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
       shell: bash
+
+    - name: Save Cache after installing dependencies
+      if: steps.cache-pip.outputs.cache-hit != 'true'
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ${{ env.CACHE_KEY }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Run Python Program
+      run: python text.py
+      env:
+        # 如果你的脚本需要环境变量，这里可以添加
+        VAR_NAME: value
+      shell: bash
+
+# 注意替换 `your_script.py` 为您的实际Python脚本名称
