@@ -24,8 +24,8 @@ jobs:
     - name: Install Google Chrome
       shell: powershell
       run: |
-        Invoke-WebRequest -Uri "https://dl.google.com/chrome/install/latest/googlechromestandaloneenterprise64.msi" -OutFile "$env:TEMP\chrome.msi"
-        Start-Process msiexec.exe -Wait -ArgumentList '/I $env:TEMP\chrome.msi /quiet'
+        $chromeInstallerPath = 'https://dl.google.com/tag/s/installdataindex/update2/installers/ChromeStandaloneSetup64.exe' # 替换为你的实际路径
+        Start-Process msiexec.exe -Wait -ArgumentList '/I', $chromeInstallerPath, '/quiet'
 
     - name: Download and install ChromeDriver
       shell: bash
