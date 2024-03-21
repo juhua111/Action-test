@@ -3,8 +3,7 @@ name: Windows with Python and Chrome
 on:
   workflow_dispatch: # 允许手动触发
   push:
-  # schedule:
-  #   - cron: '5 21 * * *' # 每天凌晨0点执行（如果需要的话可以启用）
+
 env:
   PYTHON_VERSION: 3.9
   CACHE_KEY: windows-pip-${{ hashFiles('**/requirements.txt') }}
@@ -46,6 +45,3 @@ jobs:
           env:
             VERBOSE: true
           shell: bash
-
-env:
-  python_cache_path: ${{ github.workspace }}\.pip_cache  # 自定义缓存路径
