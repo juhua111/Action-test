@@ -5,11 +5,14 @@ on:
   push:
   # schedule:
   #   - cron: '5 21 * * *' # 每天凌晨0点执行（如果需要的话可以启用）
+env:
+  PYTHON_VERSION: 3.9
+  CACHE_KEY: windows-pip-${{ hashFiles('**/requirements.txt') }}
 
 jobs:
   run-browser-tests:
-    runs-on: windows-latest
-    steps:
+        runs-on: windows-latest
+        steps:
         - name: Checkout Repository
           uses: actions/checkout@v2
     
@@ -17,7 +20,7 @@ jobs:
           id: cache-pip
           uses: actions/cache@v2
           with:
-            path: ${{ env.python_cache_path }}
+            path: ~/.cache/pip  # 使用默认pip缓存路径
             key: ${{ env.CACHE_KEY }}
             restore-keys: |
               ${{ runner.os }}-pip-
@@ -26,8 +29,7 @@ jobs:
           uses: actions/setup-python@v3
           with:
             python-version: ${{ env.PYTHON_VERSION }}
-            cache-dependency-path: ~/.cache/pip  # 使用默认pip缓存路径（setup-python v3会自动处理）
-    
+        
         - name: Install Google Chrome
           shell: powershell
           run: |
