@@ -43,8 +43,10 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        # 将pip缓存目录添加到环境变量以便后续步骤可以读取并保存
-        pip cache dir > $GITHUB_ENV
+        # 获取pip缓存路径，并创建自定义的.pip_cache目录（如果不存在的话）
+        pip_cache_dir=$(pip cache dir)
+        mkdir -p ${{ github.workspace }}\.pip_cache
+        cp -r "$pip_cache_dir"/* ${{ github.workspace }}\.pip_cache
 
     - name: Save pip cache (if needed)
       if: steps.cache-pip.outputs.cache-hit != 'true'
