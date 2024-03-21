@@ -1,4 +1,4 @@
-name: Windows with Python and Chrome
+name: main
 
 on:
   workflow_dispatch: # 允许手动触发
