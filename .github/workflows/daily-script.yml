@@ -1,25 +1,51 @@
-name: Daily Script Run
+name: Windows with Python and Chrome
 
 on:
   schedule:
     - cron: '5 21 * * *' # 每天凌晨0点执行
 
 jobs:
-  run_script:
-    runs-on: windows-latest # 或者你所需的其他运行环境
+  run-browser-tests:
+    runs-on: windows-latest
 
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v2
 
-    - name: Setup Python Environment
+    - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: 3.1.2 # 根据你的需求设置Python版本
+        python-version: 3.9 # 根据你的需求选择Python版本
 
-    - name: Install Dependencies
+    - name: Install Google Chrome
+      shell: powershell
       run: |
+        Invoke-WebRequest -Uri "https://dl.google.com/chrome/install/latest/googlechromestandaloneenterprise64.msi" -OutFile "$env:TEMP\chrome.msi"
+        Start-Process msiexec.exe -Wait -ArgumentList '/I $env:TEMP\chrome.msi /quiet'
+
+    - name: Download and install ChromeDriver
+      shell: bash
+      run: |
+        CHROME_DRIVER_VERSION=$(curl --silent "https://chromedriver.storage.googleapis.com/LATEST_RELEASE")
+        curl -Lo chromedriver.zip https://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_win32.zip
+        7z x chromedriver.zip -o./
+        mv ./chromedriver.exe $GITHUB_WORKSPACE
+        echo "##[add-path]$GITHUB_WORKSPACE"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run the script
-      run: python your_script.py
+    - name: Run browser automation script
+      run: python your_automation_script.py
+
+    - name: Clean up (Optional)
+      if: always()
+      run: |
+        Remove-Item -Force "./chromedriver.exe"
+
+# 示例requirements.txt文件内容：
+# requests==2.25.1
+# selenium==3.141.0
+# webdriver-manager==3.5.2
