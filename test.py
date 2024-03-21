@@ -22,9 +22,7 @@ class PremiumProduct:
         self.starts=0
         #商品评论数
         self.comments=0
-
-
-if __name__ == '__main__':
+def run():
     co = ChromiumOptions()
     co.headless(False)
     co.no_imgs(True)
@@ -32,4 +30,10 @@ if __name__ == '__main__':
     premium = PremiumProduct('https://www.ozon.ru/product/igrushka-disney-mandalorets-grogu-child-baby-yoda-301451890/?campaignId=346')
     page.get(premium.href)
     comments = page.wait.ele_loaded('xpath://*[@id="layoutPage"]/div[1]/div[6]/div/div[1]/div[3]/div[4]/div/div[1]/div[1]/div/div[1]/div/button/span/div/span[2]',timeout=20)
-    print(comments.text)
+    print(page.html)
+
+if __name__ == '__main__':
+    try:
+        run()
+    except Exception as e:
+        run()
