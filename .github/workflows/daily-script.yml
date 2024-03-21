@@ -3,7 +3,6 @@ name: Windows with Python and Chrome
 on:
   schedule:
     - cron: '5 21 * * *' # 每天凌晨0点执行
-  push:
   workflow_dispatch: # 允许手动触发
 
 jobs:
@@ -26,7 +25,10 @@ jobs:
         Start-Process msiexec.exe -Wait -ArgumentList '/I', $chromeInstallerPath, '/quiet'
 
     - name: Add ChromeDriver to PATH
-      run: echo "D:\a\Action-test\Action-test" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      shell: powershell
+      run: |
+        echo "$($env:GITHUB_WORKSPACE)\chromedriver.exe" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+   
     - name: Install dependencies
       run: |
           python -m pip install --upgrade pip
@@ -34,11 +36,6 @@ jobs:
 
     # - name: Run browser automation script
     #   run: python your_automation_script.py
-
-    - name: Clean up (Optional)
-      if: always()
-      run: |
-        Remove-Item -Force "D:/a/Action-test/Action-test/chromedriver.exe"
 
 # 示例requirements.txt文件内容：
 # requests==2.25.1
