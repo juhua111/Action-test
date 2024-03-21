@@ -27,19 +27,12 @@ jobs:
         $chromeInstallerPath = 'https://dl.google.com/tag/s/installdataindex/update2/installers/ChromeStandaloneSetup64.exe' # 替换为你的实际路径
         Start-Process msiexec.exe -Wait -ArgumentList '/I', $chromeInstallerPath, '/quiet'
 
-    - name: Download and install ChromeDriver
-      shell: bash
-      run: |
-        CHROME_DRIVER_VERSION=$(curl --silent "https://chromedriver.storage.googleapis.com/LATEST_RELEASE")
-        curl -Lo chromedriver.zip https://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_win32.zip
-        7z x chromedriver.zip -o./
-        mv ./chromedriver.exe $GITHUB_WORKSPACE
-        echo "##[add-path]$GITHUB_WORKSPACE"
-
+    - name: Add ChromeDriver to PATH
+      run: echo "D:\a\Action-test\Action-test" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
     # - name: Run browser automation script
     #   run: python your_automation_script.py
