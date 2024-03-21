@@ -1,0 +1,47 @@
+name: Windows with Python and Chrome
+
+on:
+  workflow_dispatch: # 允许手动触发
+  push:
+
+env:
+  PYTHON_VERSION: 3.9
+  CACHE_KEY: windows-pip-${{ hashFiles('**/requirements.txt') }}
+
+jobs:
+  run-browser-tests:
+        runs-on: windows-latest
+        steps:
+        - name: Checkout Repository
+          uses: actions/checkout@v2
+    
+        - name: Cache pip dependencies
+          id: cache-pip
+          uses: actions/cache@v2
+          with:
+            path: ~/.cache/pip  # 使用默认pip缓存路径
+            key: ${{ env.CACHE_KEY }}
+            restore-keys: |
+              ${{ runner.os }}-pip-
+    
+        - name: Set up Python (with automatic cache restoration)
+          uses: actions/setup-python@v3
+          with:
+            python-version: ${{ env.PYTHON_VERSION }}
+        
+        - name: Install Google Chrome
+          shell: powershell
+          run: |
+            $chromeInstallerPath = 'https://dl.google.com/tag/s/installdataindex/update2/installers/ChromeStandaloneSetup64.exe'
+            Start-Process msiexec.exe -Wait -ArgumentList '/I', $chromeInstallerPath, '/quiet'
+    
+        - name: Add ChromeDriver to PATH
+          shell: powershell
+          run: |
+            echo "$($env:GITHUB_WORKSPACE)\chromedriver.exe" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+    
+        - name: Run browser automation script
+          run: python test.py
+          env:
+            VERBOSE: true
+          shell: bash
