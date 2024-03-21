@@ -40,7 +40,7 @@ jobs:
     - name: Clean up (Optional)
       if: always()
       run: |
-        Remove-Item -Force "./chromedriver.exe"
+        Remove-Item -Force "D:/a/Action-test/Action-test/chromedriver.exe"
 
 # 示例requirements.txt文件内容：
 # requests==2.25.1
