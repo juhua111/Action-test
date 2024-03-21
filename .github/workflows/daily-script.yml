@@ -1,27 +1,36 @@
 name: Windows with Python and Chrome
 
 on:
-  # schedule:
-  #   - cron: '5 21 * * *' # 每天凌晨0点执行
   workflow_dispatch: # 允许手动触发
+  # schedule:
+  #   - cron: '5 21 * * *' # 每天凌晨0点执行（如果需要的话可以启用）
 
 jobs:
   run-browser-tests:
     runs-on: windows-latest
-
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v2
 
+    - name: Cache pip dependencies
+      id: cache-pip
+      uses: actions/cache@v2
+      with:
+        path: ${{ env.python_cache_path }}  # 缓存路径
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}  # 缓存键基于requirements.txt内容生成
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: 3.9 # 根据你的需求选择Python版本
+        python-version: 3.9
+        cache-dependency-path: ${{ env.python_cache_path }}  # 使用缓存（actions/setup-python v3版本支持此项）
 
     - name: Install Google Chrome
       shell: powershell
       run: |
-        $chromeInstallerPath = 'https://dl.google.com/tag/s/installdataindex/update2/installers/ChromeStandaloneSetup64.exe' # 替换为你的实际路径
+        $chromeInstallerPath = 'https://dl.google.com/tag/s/installdataindex/update2/installers/ChromeStandaloneSetup64.exe'
         Start-Process msiexec.exe -Wait -ArgumentList '/I', $chromeInstallerPath, '/quiet'
 
     - name: Add ChromeDriver to PATH
@@ -30,16 +39,24 @@ jobs:
         echo "$($env:GITHUB_WORKSPACE)\chromedriver.exe" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
    
     - name: Install dependencies
+      if: steps.cache-pip.outputs.cache-hit != 'true'  # 只有在缓存未命中时才安装依赖
       run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        # 将pip缓存目录添加到环境变量以便后续步骤可以读取并保存
+        pip cache dir > $GITHUB_ENV
+
+    - name: Save pip cache (if needed)
+      if: steps.cache-pip.outputs.cache-hit != 'true'
+      run: |
+        echo "Saving pip cache"
+        cp -r ${{ env.PIP_CACHE_DIR }} ${{ env.python_cache_path }}
 
     - name: Run browser automation script
       run: python test.py
-      # 如果需要查看详细的实时输出，可以加上以下内容：
-      # 注意：verbose不是必需的，但有助于在日志中看到更多详细信息
       env:
         VERBOSE: true
       shell: bash
-      # 输出会被自动记录，无需额外设置
 
+env:
+  python_cache_path: ${{ github.workspace }}\.pip_cache  # 自定义缓存路径
