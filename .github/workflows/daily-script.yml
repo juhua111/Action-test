@@ -15,7 +15,7 @@ jobs:
     - name: Setup Python Environment
       uses: actions/setup-python@v2
       with:
-        python-version: 3.x # 根据你的需求设置Python版本
+        python-version: 3.1.2 # 根据你的需求设置Python版本
 
     - name: Install Dependencies
       run: |
