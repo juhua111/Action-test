@@ -38,15 +38,14 @@ jobs:
       run: |
         echo "$($env:GITHUB_WORKSPACE)\chromedriver.exe" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
    
-    - name: Install dependencies
-      if: steps.cache-pip.outputs.cache-hit != 'true'  # 只有在缓存未命中时才安装依赖
+    - name: Install dependencies and create pip cache directory
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         # 获取pip缓存路径，并创建自定义的.pip_cache目录（如果不存在的话）
-        pip_cache_dir=$(pip cache dir)
-        mkdir -p ${{ github.workspace }}\.pip_cache
-        cp -r "$pip_cache_dir"/* ${{ github.workspace }}\.pip_cache
+        $pipCacheDir = (pip cache dir)
+        mkdir -Force "$($env:GITHUB_WORKSPACE)\.pip_cache"
+        Get-ChildItem -Path $pipCacheDir -Recurse | Copy-Item -Destination "$($env:GITHUB_WORKSPACE)\.pip_cache" -Recurse -Container
 
     - name: Save pip cache (if needed)
       if: steps.cache-pip.outputs.cache-hit != 'true'
