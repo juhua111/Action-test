@@ -2,7 +2,7 @@ name: Daily Script Run
 
 on:
   schedule:
-    - cron: '0 0 * * *' # 每天凌晨0点执行
+    - cron: '5 21 * * *' # 每天凌晨0点执行
 
 jobs:
   run_script:
