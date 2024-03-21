@@ -10,58 +10,40 @@ jobs:
   run-browser-tests:
     runs-on: windows-latest
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
-
-    - name: Cache pip dependencies
-      id: cache-pip
-      uses: actions/cache@v2
-      with:
-        path: ${{ env.python_cache_path }}  # 缓存路径
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}  # 缓存键基于requirements.txt内容生成
-        restore-keys: |
-          ${{ runner.os }}-pip-
-
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.9
-        cache-dependency-path: ${{ env.python_cache_path }}  # 使用缓存（actions/setup-python v3版本支持此项）
-
-    - name: Install Google Chrome
-      shell: powershell
-      run: |
-        $chromeInstallerPath = 'https://dl.google.com/tag/s/installdataindex/update2/installers/ChromeStandaloneSetup64.exe'
-        Start-Process msiexec.exe -Wait -ArgumentList '/I', $chromeInstallerPath, '/quiet'
-
-    - name: Add ChromeDriver to PATH
-      shell: powershell
-      run: |
-        echo "$($env:GITHUB_WORKSPACE)\chromedriver.exe" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-   
-    - name: Install dependencies and create pip cache directory (overwrite existing)
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        # 获取pip缓存路径，并确保自定义的.pip_cache目录为空或不存在
-        $pipCacheDir = (pip cache dir)
-        if (Test-Path "$($env:GITHUB_WORKSPACE)\.pip_cache") {
-          Remove-Item -Recurse -Force "$($env:GITHUB_WORKSPACE)\.pip_cache"
-        }
-        mkdir -Force "$($env:GITHUB_WORKSPACE)\.pip_cache"
-        Get-ChildItem -Path $pipCacheDir -Recurse | Copy-Item -Destination "$($env:GITHUB_WORKSPACE)\.pip_cache" -Recurse -Container
-
-    - name: Save pip cache (if needed)
-      if: steps.cache-pip.outputs.cache-hit != 'true'
-      run: |
-        echo "Saving pip cache"
-        cp -r ${{ env.PIP_CACHE_DIR }} ${{ env.python_cache_path }}
-
-    - name: Run browser automation script
-      run: python test.py
-      env:
-        VERBOSE: true
-      shell: bash
+        - name: Checkout Repository
+          uses: actions/checkout@v2
+    
+        - name: Cache pip dependencies
+          id: cache-pip
+          uses: actions/cache@v2
+          with:
+            path: ${{ env.python_cache_path }}
+            key: ${{ env.CACHE_KEY }}
+            restore-keys: |
+              ${{ runner.os }}-pip-
+    
+        - name: Set up Python (with automatic cache restoration)
+          uses: actions/setup-python@v3
+          with:
+            python-version: ${{ env.PYTHON_VERSION }}
+            cache-dependency-path: ~/.cache/pip  # 使用默认pip缓存路径（setup-python v3会自动处理）
+    
+        - name: Install Google Chrome
+          shell: powershell
+          run: |
+            $chromeInstallerPath = 'https://dl.google.com/tag/s/installdataindex/update2/installers/ChromeStandaloneSetup64.exe'
+            Start-Process msiexec.exe -Wait -ArgumentList '/I', $chromeInstallerPath, '/quiet'
+    
+        - name: Add ChromeDriver to PATH
+          shell: powershell
+          run: |
+            echo "$($env:GITHUB_WORKSPACE)\chromedriver.exe" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+    
+        - name: Run browser automation script
+          run: python test.py
+          env:
+            VERBOSE: true
+          shell: bash
 
 env:
   python_cache_path: ${{ github.workspace }}\.pip_cache  # 自定义缓存路径
