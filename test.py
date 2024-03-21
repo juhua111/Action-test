@@ -26,7 +26,7 @@ def run():
     co = ChromiumOptions()
     co.headless(False)
     co.no_imgs(True)
-    co.set_user_data_path(r"C:/Users/Administrator/Desktop/appdata")
+    co.set_user_data_path(r"appdata")
     page = ChromiumPage(co)
     premium = PremiumProduct('https://www.ozon.ru/product/igrushka-disney-mandalorets-grogu-child-baby-yoda-301451890/?campaignId=346')
     page.new_tab(premium.href)
