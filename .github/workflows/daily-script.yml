@@ -35,5 +35,5 @@ jobs:
           pip install -r requirements.txt
 
     - name: Run browser automation script
-      run: test.py
+      run: python test.py
 
