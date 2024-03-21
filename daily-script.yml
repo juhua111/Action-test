@@ -1,0 +1,25 @@
+name: Daily Script Run
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # 每天凌晨0点执行
+
+jobs:
+  run_script:
+    runs-on: ubuntu-latest # 或者你所需的其他运行环境
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Setup Python Environment
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.x # 根据你的需求设置Python版本
+
+    - name: Install Dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Run the script
+      run: python your_script.py
