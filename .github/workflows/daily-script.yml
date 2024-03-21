@@ -3,6 +3,10 @@ name: Windows with Python and Chrome
 on:
   schedule:
     - cron: '5 21 * * *' # 每天凌晨0点执行
+  push:
+    branches:
+      - main # 或者你想要监听的分支名
+  workflow_dispatch: # 允许手动触发
 
 jobs:
   run-browser-tests:
