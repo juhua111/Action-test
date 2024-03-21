@@ -29,9 +29,9 @@ def run():
     co.set_user_data_path(r"appdata")
     page = ChromiumPage(co)
     premium = PremiumProduct('https://www.ozon.ru/product/igrushka-disney-mandalorets-grogu-child-baby-yoda-301451890/?campaignId=346')
-    page.new_tab(premium.href)
+    tab = page.new_tab(premium.href)
     comments = page.wait.ele_loaded('xpath://*[@id="layoutPage"]/div[1]/div[6]/div/div[1]/div[3]/div[4]/div/div[1]/div[1]/div/div[1]/div/button/span/div/span[2]',timeout=20)
-    print(comments.text)
+    print(tab.html)
 
 if __name__ == '__main__':
     try:
