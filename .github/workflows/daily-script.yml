@@ -36,4 +36,10 @@ jobs:
 
     - name: Run browser automation script
       run: python test.py
+      # 如果需要查看详细的实时输出，可以加上以下内容：
+      # 注意：verbose不是必需的，但有助于在日志中看到更多详细信息
+      env:
+        VERBOSE: true
+      shell: bash
+      # 输出会被自动记录，无需额外设置
 
