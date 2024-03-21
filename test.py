@@ -25,18 +25,21 @@ class PremiumProduct:
         self.starts=0
         #商品评论数
         self.comments=0
-def run():
-    co = ChromiumOptions()
-    co.headless(False)
-    co.no_imgs(True)
-    co.set_user_data_path(r"appdata")
-    page = ChromiumPage(co)
-    premium = PremiumProduct('https://www.ozon.ru/product/igrushka-disney-mandalorets-grogu-child-baby-yoda-301451890/?campaignId=346')
-    tab = page.new_tab(premium.href)
-    tab.wait.ele_loaded('xpath://*[@id="layoutPage"]/div[1]/div[6]/div/div[1]/div[3]/div[4]/div/div[1]/div[1]/div/div[1]/div/button/span/div/span[2]',timeout=20)
-    print(tab.ele('xpath://*[@id="layoutPage"]/div[1]/div[6]/div/div[1]/div[3]/div[4]/div/div[1]/div[1]/div/div[1]/div/button/span/div/span[2]').text)
-    tab.close()
-    page.quit()
+def run(isFirst=True):
+    if isFirst:
+        co = ChromiumOptions()
+        co.headless(False)
+        co.no_imgs(True)
+        co.set_user_data_path(r"appdata")
+        page = ChromiumPage(co)
+        premium = PremiumProduct('https://www.ozon.ru/product/igrushka-disney-mandalorets-grogu-child-baby-yoda-301451890/?campaignId=346')
+        tab = page.new_tab(premium.href)
+    if tab.wait.ele_loaded('xpath://*[@id="layoutPage"]/div[1]/div[6]/div/div[1]/div[3]/div[4]/div/div[1]/div[1]/div/div[1]/div/button/span/div/span[2]',timeout=20):
+        print(tab.ele('xpath://*[@id="layoutPage"]/div[1]/div[6]/div/div[1]/div[3]/div[4]/div/div[1]/div[1]/div/div[1]/div/button/span/div/span[2]').text)
+        tab.close()
+        page.quit()
+    else:
+        run(False)
 if __name__ == '__main__':
     try:
         run()
