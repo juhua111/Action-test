@@ -45,7 +45,7 @@ jobs:
           ${{ runner.os }}-pip-
 
     - name: Run Python Program
-      run: python text.py
+      run: python ./test.py
       env:
         # 如果你的脚本需要环境变量，这里可以添加
         VAR_NAME: value
