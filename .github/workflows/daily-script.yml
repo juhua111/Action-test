@@ -37,7 +37,3 @@ jobs:
     - name: Run browser automation script
       run: test.py
 
-# 示例requirements.txt文件内容：
-# requests==2.25.1
-# selenium==3.141.0
-# webdriver-manager==3.5.2
