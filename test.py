@@ -45,16 +45,11 @@ class PremiumProduct:
             self.sku=layoutPage('x:/div[1]/div[4]/div[2]/div/div/div/div[2]/div[1]/button/div').text
             self.price=layoutPage('@data-widget=webPrice').eles('t:span')[3].text
         except Exception as e: 
+            print("商品信息获取失败 "+str(e))
             self.search_premium_product(tab,index=index)
-            self.get_premium_stock_sale_gmv()
-            print(e)
-            # if index < 10:
-            #     index += 1
-            #     tab.wait(1)
-            #     self.search_premium_product(tab,index=index)
-            #     self.get_premium_stock_sale_gmv()
-            # else:
-            #     print("商品信息获取失败")
+        
+        self.get_premium_stock_sale_gmv()
+
     def get_premium_stock_sale_gmv(self):
         headers = {
             "accept": "*/*",
