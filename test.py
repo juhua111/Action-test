@@ -46,7 +46,12 @@ class PremiumProduct:
             self.price=layoutPage('@data-widget=webPrice').eles('t:span')[3].text
         except Exception as e: 
             print("商品信息获取失败 "+str(e))
-            self.search_premium_product(tab,index=index)
+            index+=1
+            if index>30:
+                print("商品信息获取失败 超过30次")
+                return
+            else:
+                self.search_premium_product(tab,index=index)
         self.get_premium_stock_sale_gmv()
 
     def get_premium_stock_sale_gmv(self):
