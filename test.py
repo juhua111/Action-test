@@ -83,6 +83,7 @@ def run():
     premium = PremiumProduct('https://www.ozon.ru/product/nabor-figurok-skibidi-tualet-unitaz-skibidisty-kameramen-spikermen-1212924339/?advert=r4GQG1gACtcW3pIcu0kywgPbnpDWlYapVLBW4SYJvc1s0kcV9udSUt5NiLTVPimQRM6siXRvj2omLt4mcIyMVcbD6SHQFt_uYGCF5UcqU3PjxNmTAvdj7Kd272tRmvyIexCcHam_z6ZCmGO9yACmnpv1itmAMHhXxM34yWI3r4FUU_CE-kV6SJBV0-ohaY8L55d9P3IxtoPArA&avtc=1&avte=2&avts=1711071471')
     tab = page.new_tab(premium.href)
     tab.wait(5)
+    print(tab.html)
     premium.search_premium_product(tab)
     premium.console()
     tab.close()
