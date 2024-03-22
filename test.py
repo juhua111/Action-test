@@ -3,6 +3,7 @@ from DrissionPage._pages.chromium_tab import ChromiumTab
 import sys
 import json
 import requests
+import re
 if sys.stdout.encoding != 'utf-8':
     sys.stdout.reconfigure(encoding='utf-8')
 
@@ -38,21 +39,21 @@ class PremiumProduct:
 
     def search_premium_product(self,tab:ChromiumTab,index=0):
         try:
-            layoutPage = tab.s_ele('x://*[@id="layoutPage"]')
-            self.comments=layoutPage('x:/div[1]/div[4]/div[3]/div[1]/div[1]/div[2]/div/div[2]/div[1]/a/div').text
-            self.questions=layoutPage('x:/div[1]/div[4]/div[3]/div[1]/div[1]/div[2]/div/div[2]/div[2]/a/div').text
-            self.title=layoutPage('x:/div[1]/div[4]/div[3]/div[1]/div[1]/div[2]/div/div[1]/h1').text
-            self.sku=layoutPage('x:/div[1]/div[4]/div[2]/div/div/div/div[2]/div[1]/button/div').text
-            self.price=layoutPage('@data-widget=webPrice').eles('t:span')[3].text
+            body = tab.s_ele('t:body')
+            self.comments=body('@data-widget=webReviewProductScore').text
+            self.questions=body('@data-widget=webQuestionCount').text
+            self.title=body('@data-widget=webProductHeading').text
+            self.sku = str(re.search(r'.*-(\d+)\/\?.*',self.href).group(1))
+            self.price=body('@data-widget=webPrice').eles('t:span')[3].text
+            self.get_premium_stock_sale_gmv()
         except Exception as e: 
             print("商品信息获取失败 "+str(e))
             index+=1
             if index>30:
                 print("商品信息获取失败 超过30次")
-                return
             else:
                 self.search_premium_product(tab,index=index)
-        self.get_premium_stock_sale_gmv()
+        
 
     def get_premium_stock_sale_gmv(self):
         headers = {
@@ -78,14 +79,12 @@ def run():
     co = ChromiumOptions()
     co.headless(False)
     co.no_imgs(True)
-    co.set_user_data_path(r'Userdata')
     page = ChromiumPage(co)
     premium = PremiumProduct('https://www.ozon.ru/product/nabor-figurok-skibidi-tualet-unitaz-skibidisty-kameramen-spikermen-1212924339/?advert=r4GQG1gACtcW3pIcu0kywgPbnpDWlYapVLBW4SYJvc1s0kcV9udSUt5NiLTVPimQRM6siXRvj2omLt4mcIyMVcbD6SHQFt_uYGCF5UcqU3PjxNmTAvdj7Kd272tRmvyIexCcHam_z6ZCmGO9yACmnpv1itmAMHhXxM34yWI3r4FUU_CE-kV6SJBV0-ohaY8L55d9P3IxtoPArA&avtc=1&avte=2&avts=1711071471')
     tab = page.new_tab(premium.href)
-    tab.wait(10)
+    tab.wait(5)
     premium.search_premium_product(tab)
     premium.console()
-
     tab.close()
     page.quit()
 
