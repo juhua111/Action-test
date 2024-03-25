@@ -1,8 +1,9 @@
 name: Windows Python Build and Run
 
 on:
-  workflow_dispatch: # 允许手动触发
-  push:
+  schedule:
+    - cron: '0 */3 * * *'  # 每三天执行一次，精确到小时（每3天的每个小时的第0分钟执行）
+  workflow_dispatch:  # 仍然保留手动触发
 
 env:
   PYTHON_VERSION: 3.9
