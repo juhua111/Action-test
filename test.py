@@ -50,6 +50,7 @@ class PremiumProduct:
         print(f'商品链接{self.href}')
 
     def search_premium_product(self,page:ChromiumTab,index=0):
+        page.wait.ele_loaded('@data-widget:Score')
         pagehtml=make_session_ele(page.html)
         try:
             body = pagehtml.s_ele('t:body')
