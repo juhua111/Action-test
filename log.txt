@@ -1,6 +1,0 @@
-
-没有找到元素。
-method: ele()
-args: {'locator': '@data-widget=webReviewProductScore', 'index': 1}https://www.ozon.ru/product/western-digital-1-tb-vnutrenniy-zhestkiy-disk-wd10ezex-533887224/?advert=rGDMlqq-ZrQvLPcKB0aF_gA8TJgCiAa5vOCFV1oVmuGpDUBYu4RTfFkYSAmaMgulUChOsHhvzNWhtuMmjG9iwzwHQGCGGgeoiXvGQ3YJtO2oCwQ8MzgytLc0ulSL7sO_1Zm8fHlYgViWSjqMjTbuXWnI17NqvvvIxvaz6fKTFF9OxRyU9IG07debEesw63_sWQgYG4sSGplzj6p4Y34wJzPK7-K-2sHt8N5QFRow3fHpBvcP0uw9IUo9ScKdsI8A9XFKwA7mOzwVxMc_dnHOblYVV-9b1IJDZ9cKsPWJX-rsa6mM3GbZtOUpRJH7uHCNmkU1qDYp9qdTk66QZNkJBQt9D7gC&avtc=1&avte=2&avts=1711073922&keywords=WD10EZEX
-'NoneType' object has no attribute 'group'https://www.ozon.ru/product/western-digital-1-tb-vnutrenniy-zhestkiy-disk-wd10ezex-1481607806/
-与页面的连接已断开。https://www.ozon.ru/product/seagate-2-tb-vnutrenniy-zhestkiy-disk-skyhawk-1-tb-st1000vx005-1-tb-skyhawk-2-tb-st2000vx008-2-tb-1324064135/?advert=NLwF8OLDEWM68ttDjv3ZFYcn7y0Bji39_VkEY7RSwRIoFqV2cvct5WpMeZBFwP900PWsQtKdLEY1jRdBiQFnZkwo6E6Fmqb6QVHFwaRsA3CHU5lhIrZ9y7swPw6a4q9MJriod7k5ssic3807faOvhTT7aXm5PWO9KPmmhoGEPROf5nTyYmPQuBA2ua7qPcfU99JfNuIGLCWeRa9mLMvA7YG-64S36VfA0eWuRObzg3amJ3_d9bjOZQ5Ia_PhiLiKMZU2LRrAKsTf3nB_v9N0bJZ42VzWSamyYCpVRUaWfvKFlb6BaakAl5voymzv1HUGclq113LgvRjxaHgF8ab-bFxOxJJxiQ&avtc=1&avte=2&avts=1711073800&keywords=st1000vx005
