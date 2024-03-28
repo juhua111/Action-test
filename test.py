@@ -173,6 +173,13 @@ if __name__ == '__main__':
     time_diff = now - last_time
     if time_diff.days%3==0 or time_diff.days==0:
         # config = read_config()
+        config = read_config()
+        hrefdict=[]
+        for i in config.keys():
+            for href in config[i]:
+                hrefdict.append({'href':href,'name':i})
+        
+        # config = read_err()
         # hrefdict=[]
         # for i in config.keys():
         #     for href in config[i]:
