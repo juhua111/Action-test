@@ -172,25 +172,23 @@ if __name__ == '__main__':
 
     time_diff = now - last_time
     if time_diff.days%3==0 or time_diff.days==0:
-        config = read_config()
-        hrefdict=[]
-        for i in config.keys():
-            for href in config[i]:
-                hrefdict.append({'href':href,'name':i})
-        
-        # config = read_err()
+        # config = read_config()
         # hrefdict=[]
-        # for href in config:
-        #     hrefdict.append({'href':href,'name':'error'})
+        # for i in config.keys():
+        #     for href in config[i]:
+        #         hrefdict.append({'href':href,'name':i})
+        
+        config = read_err()
+        hrefdict=[]
+        for href in config:
+            hrefdict.append({'href':href,'name':'error'})
 
-
+        print(hrefdict)
         co = ChromiumOptions()
         co.headless(False)
         co.no_imgs(True)
-        co.no_js(True)
         co.set_user_data_path(r"userdata")
         page = ChromiumPage(co)
-
         with ThreadPoolExecutor(max_workers=5) as executor:
             for i in hrefdict:
                 prem = PremiumProduct(i['href'])
