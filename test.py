@@ -162,15 +162,16 @@ def read_err():
     return hrefs
 
 
+if __name__ == '__main__':
+    with open("time.txt","r",encoding="utf-8") as f:
+        last_time_stamp = int(f.read())
 
-def main():
-    last_run_timestamp_str = sys.argv[1]
-    last_run_timestamp = int(last_run_timestamp_str)
-    current_timestamp = int(time.time())
+    # 将时间戳转换为datetime对象
+    last_time = datetime.datetime.fromtimestamp(last_time_stamp)
+    now = datetime.datetime.now()  # 结束时间，使用当前时间作为示例
 
-    if current_timestamp - last_run_timestamp >= 259200:  # 3天时间差（以秒为单位）
-        # 执行核心业务逻辑
-        print("It's been at least 3 days since the last run.")
+    time_diff = now - last_time
+    if time_diff.days%3==0 or time_diff.days==0:
         config = read_config()
         hrefdict=[]
         for i in config.keys():
@@ -198,24 +199,3 @@ def main():
                 executor.submit(prem.run)
 
         page.quit()
-        # 更新LAST_RUN_TIMESTAMP
-        # 这里由于GitHub Actions限制，我们不能直接在脚本中更新Secrets
-        # 可以选择调用GitHub REST API来更新（需要一个PAT）
-        # 或者让脚本输出新的timestamp，然后在后续Action步骤中更新
-        new_timestamp = current_timestamp
-        print(f"New timestamp for updating secret: {new_timestamp}")
-
-        # 示例更新GitHub Secrets的API调用（需要PAT）
-        token = ""
-        headers = {'Authorization': f'token {token}'}
-        url = f'https://api.github.com/repos/{"juhua111"}/{"Action-test"}/actions/secrets/LAST_RUN_TIMESTAMP'
-        data = {'value': str(new_timestamp)}
-        response = requests.put(url, headers=headers, json=data)
-        print(response.status_code, response.json())
-
-    else:
-        print("Not running because it hasn't been 3 days since the last run.")
-
-
-if __name__ == '__main__':
-    main()
