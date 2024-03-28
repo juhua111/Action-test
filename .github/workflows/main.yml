@@ -2,20 +2,43 @@ name: Windows Python Build and Run
 
 on:
   schedule:
-    - cron: '26 1 28 */3 *'  # 每三天执行一次，精确到小时（每3天的每个小时的第0分钟执行）
+    - cron: '0 1 * * *'  # 每三天执行一次，精确到小时（每3天的每个小时的第0分钟执行）
   workflow_dispatch:  # 仍然保留手动触发
-
+  
 env:
   PYTHON_VERSION: 3.9
   CACHE_KEY: windows-pip-${{ github.sha }}
-
+  LAST_RUN_TIMESTAMP: ${{ secrets.LAST_RUN_TIMESTAMP }}
 jobs:
   build-and-run:
     runs-on: windows-latest
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v2
-
+    - name: Check and Run Every Three Days
+      id: check_and_run
+      run: |
+        # 获取当前时间戳（示例采用Unix时间戳，精确到秒）
+        CURRENT_TIMESTAMP=$(date +%s)
+        # 检查LAST_RUN_TIMESTAMP是否存在并计算时间差
+        if [ -n "${{ env.LAST_RUN_TIMESTAMP }}" ]; then
+          TIME_SINCE_LAST_RUN=$((CURRENT_TIMESTAMP - ${LAST_RUN_TIMESTAMP}))
+          # 如果时间差大于等于3天（以秒为单位，这里设定为259200秒）
+          if (( TIME_SINCE_LAST_RUN >= 259200 )); then
+            echo "Running the script because it's been at least 3 days since the last run."
+            python ./test.py
+            # 更新LAST_RUN_TIMESTAMP
+            export LAST_RUN_TIMESTAMP=$CURRENT_TIMESTAMP
+          else
+            echo "Skipping the script because it hasn't been 3 days since the last run."
+            exit 0
+          fi
+        else
+          echo "No previous run timestamp found. Running the script."
+          python ./test.py
+          # 设置初始LAST_RUN_TIMESTAMP
+          export LAST_RUN_TIMESTAMP=$CURRENT_TIMESTAMP
+        fi
     - name: Cache pip dependencies
       id: cache-pip
       uses: actions/cache@v2
@@ -44,7 +67,14 @@ jobs:
         key: ${{ env.CACHE_KEY }}
         restore-keys: |
           ${{ runner.os }}-pip-
-
+    - name: Update Last Run Timestamp Secret
+      if: always() && steps.check_and_run.outputs.last_run_timestamp_updated == 'true'
+      uses: hashicorp/actions/github-actions-set-secret@v1
+      with:
+        name: LAST_RUN_TIMESTAMP
+        value: ${{ env.LAST_RUN_TIMESTAMP }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Run Python Program
       run: python ./test.py
       env:
