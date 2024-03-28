@@ -162,32 +162,60 @@ def read_err():
     return hrefs
 
 
+
+def main():
+    last_run_timestamp_str = sys.argv[1]
+    last_run_timestamp = int(last_run_timestamp_str)
+    current_timestamp = int(time.time())
+
+    if current_timestamp - last_run_timestamp >= 259200:  # 3天时间差（以秒为单位）
+        # 执行核心业务逻辑
+        print("It's been at least 3 days since the last run.")
+        config = read_config()
+        hrefdict=[]
+        for i in config.keys():
+            for href in config[i]:
+                hrefdict.append({'href':href,'name':i})
+        
+        # config = read_err()
+        # hrefdict=[]
+        # for href in config:
+        #     hrefdict.append({'href':href,'name':'error'})
+
+
+        co = ChromiumOptions()
+        co.headless(False)
+        co.no_imgs(True)
+        co.no_js(True)
+        co.set_user_data_path(r"userdata")
+        page = ChromiumPage(co)
+
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            for i in hrefdict:
+                prem = PremiumProduct(i['href'])
+                prem.name = i['name']
+                prem.page = page
+                executor.submit(prem.run)
+
+        page.quit()
+        # 更新LAST_RUN_TIMESTAMP
+        # 这里由于GitHub Actions限制，我们不能直接在脚本中更新Secrets
+        # 可以选择调用GitHub REST API来更新（需要一个PAT）
+        # 或者让脚本输出新的timestamp，然后在后续Action步骤中更新
+        new_timestamp = current_timestamp
+        print(f"New timestamp for updating secret: {new_timestamp}")
+
+        # 示例更新GitHub Secrets的API调用（需要PAT）
+        token = "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"
+        headers = {'Authorization': f'token {token}'}
+        url = f'https://api.github.com/repos/{"juhua111"}/{"Action-test"}/actions/secrets/LAST_RUN_TIMESTAMP'
+        data = {'value': str(new_timestamp)}
+        response = requests.put(url, headers=headers, json=data)
+        print(response.status_code, response.json())
+
+    else:
+        print("Not running because it hasn't been 3 days since the last run.")
+
+
 if __name__ == '__main__':
-
-    config = read_config()
-    hrefdict=[]
-    for i in config.keys():
-        for href in config[i]:
-            hrefdict.append({'href':href,'name':i})
-    
-    # config = read_err()
-    # hrefdict=[]
-    # for href in config:
-    #     hrefdict.append({'href':href,'name':'error'})
-
-
-    co = ChromiumOptions()
-    co.headless(False)
-    co.no_imgs(True)
-    co.no_js(True)
-    co.set_user_data_path(r"userdata")
-    page = ChromiumPage(co)
-
-    with ThreadPoolExecutor(max_workers=5) as executor:
-        for i in hrefdict:
-            prem = PremiumProduct(i['href'])
-            prem.name = i['name']
-            prem.page = page
-            executor.submit(prem.run)
-
-    page.quit()
+    main()
