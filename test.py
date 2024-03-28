@@ -206,7 +206,7 @@ def main():
         print(f"New timestamp for updating secret: {new_timestamp}")
 
         # 示例更新GitHub Secrets的API调用（需要PAT）
-        token = "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"
+        token = ""
         headers = {'Authorization': f'token {token}'}
         url = f'https://api.github.com/repos/{"juhua111"}/{"Action-test"}/actions/secrets/LAST_RUN_TIMESTAMP'
         data = {'value': str(new_timestamp)}
