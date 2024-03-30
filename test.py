@@ -204,3 +204,5 @@ if __name__ == '__main__':
                 executor.submit(prem.run)
 
         page.quit()
+    else:
+        print("time not begin")
