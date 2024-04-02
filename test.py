@@ -185,10 +185,10 @@ if __name__ == '__main__':
         #     for href in config[i]:
         #         hrefdict.append({'href':href,'name':i})
         
-        config = read_err()
-        hrefdict=[]
-        for href in config:
-            hrefdict.append({'href':href,'name':'error'})
+        # config = read_err()
+        # hrefdict=[]
+        # for href in config:
+        #     hrefdict.append({'href':href,'name':'error'})
 
         print(hrefdict)
         co = ChromiumOptions()
