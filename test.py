@@ -9,9 +9,9 @@ import re
 from concurrent.futures import ThreadPoolExecutor
 import threading
 import time
-lock = threading.Lock()
 from threading import Thread
 
+lock = threading.Lock()
 if sys.stdout.encoding != 'utf-8':
     sys.stdout.reconfigure(encoding='utf-8')
 
@@ -96,7 +96,6 @@ class PremiumProduct:
             url = "https://plugin.mpstats.io/pluginapi"
             res = requests.post(url=url,headers=headers,data=json.dumps(data))
             data = res.json()
-            print(data)
             items = data['items'][self.sku]
             self.sale=items['OrdersNewArray'][-3:]
             self.shop_name=items['Seller']
@@ -172,7 +171,7 @@ if __name__ == '__main__':
 
     time_diff = now - last_time
     if time_diff.days%3==0 or time_diff.days==0:
-        # config = read_config()
+
         config = read_config()
         hrefdict=[]
         for i in config.keys():
@@ -181,16 +180,9 @@ if __name__ == '__main__':
         
         # config = read_err()
         # hrefdict=[]
-        # for i in config.keys():
-        #     for href in config[i]:
-        #         hrefdict.append({'href':href,'name':i})
-        
-        # config = read_err()
-        # hrefdict=[]
         # for href in config:
         #     hrefdict.append({'href':href,'name':'error'})
 
-        print(hrefdict)
         co = ChromiumOptions()
         co.headless(False)
         co.no_imgs(True)
@@ -204,5 +196,6 @@ if __name__ == '__main__':
                 executor.submit(prem.run)
 
         page.quit()
+        print(read_err())
     else:
         print("time not begin")
